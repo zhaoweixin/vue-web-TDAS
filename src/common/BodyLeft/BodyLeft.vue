@@ -4,7 +4,7 @@
             <vs-row vs-justify="center">
                 <vs-col vs-type="flex" vs-justify="center" vs-align="center">
                     <vs-card>
-                    <vs-upload action="http://localhost:3000/icd/changeavatar" @on-success="successUpload"/>
+                    <vs-upload action="http://localhost:3000/api/changeavatar" @on-success="successUpload"/>
                     <div slot="footer">
                         <vs-row vs-justify="flex-end">
                             <vs-button vs-type="gradient" color="danger" vs-icon="favorite"></vs-button>
