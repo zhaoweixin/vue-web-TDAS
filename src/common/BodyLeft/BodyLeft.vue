@@ -42,23 +42,7 @@
 <script>
 
 export default {
-  methods:{
-    successUpload(event){
-      console.log(event)
-      let img = event.target.files[0];
-      let size = img.size;
-      let Form = new FormData();
-      Form.append('avatar', img, this.avatar_name);
-      API.successUpload(Form)
-        .then((response) => {
-            console.log('this is response' + response)
-        })
-        .catch((error) => {
-            console.log('this is the:' + error)
-        })
-      this.$vs.notify({color:'success',title:'Upload Success',text:'Lorem ipsum dolor sit amet, consectetur'})
-    }
-  }
+    
 }
 </script>
 <style scoped>
