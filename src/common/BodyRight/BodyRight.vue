@@ -2,7 +2,6 @@
     <div id = "bodyright">
         <vs-row vs-justify="center">
             <vs-col vs-type="flex" vs-justify="center" vs-align="center" vs-w="4">
-            <vs-card actionable class="cardx">
                 <div slot="header">
                 <h4>
                     LineChart
@@ -16,10 +15,8 @@
                     <vs-button color="primary" vs-type="gradient" vs-icon="add"></vs-button>
                 </vs-row>
                 </div>
-            </vs-card>
             </vs-col>
             <vs-col vs-type="flex" vs-justify="center" vs-align="center" vs-w="4">
-            <vs-card actionable class="cardx">
                 <div slot="header">
                 <h4>
                     Pie Chart
@@ -33,7 +30,6 @@
                     <vs-button color="primary" vs-type="gradient" vs-icon="add"></vs-button>
                 </vs-row>
                 </div>
-            </vs-card>
             </vs-col>
 
             <vs-col vs-type="flex" vs-justify="center" vs-align="center" vs-w="4">
@@ -63,7 +59,6 @@
     #bodyright{
         float: right;
         width: 15%;
-        height: 850px;
-        border: 2px solid orangered;
+        height: 75%;
     }
 </style>

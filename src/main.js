@@ -4,20 +4,21 @@ import Vue from 'vue'
 import App from './App'
 import Vuesax from 'vuesax'
 import VueRouter from 'vue-router'
+import Vuex from 'vuex'
+import 'es6-promise/auto'
 
 Vue.use(VueRouter)
 Vue.use(Vuesax)
+Vue.use(Vuex)
 
-import Router from 'vue-router'
-import HelloWorld from '@/components/HelloWorld'
-import HomePage from '@/components/HomePage/HomePage'
-import NewsPage from '@/components/NewsPage/NewsPage'
-import BodyLeft from '@/common/BodyLeft/BodyLeft'
-import BodyRight from '@/common/BodyRight/BodyRight'
-import BodyMiddle from '@/common/BodyMiddle/BodyMiddle'
-import BodyBottom from '@/common/BodyBottom/BodyBottom'
 import 'vuesax/dist/vuesax.css'
 import 'material-icons/iconfont/material-icons.css';
+
+import HomePage from '@/components/HomePage/HomePage'
+import NewsPage from '@/components/NewsPage/NewsPage'
+
+/*function*/
+import DataManager from './common/DataManager'
 
 Vue.config.productionTip = false
 
@@ -33,12 +34,68 @@ const router = new VueRouter({
   routes
 })
 
+const store = new Vuex.Store({
+  state: {
+    filesListData:[
+      {"title": ""}
+    ],
+    fileAttrList:[''],
+    checkboxes:[]
+  },
+  mutations: {
+    getFilesListData (state, payload) {
+      state.filesListData = payload.data
+    },
+    getFileAttrList (state, payload) {
+      state.fileAttrList = payload.data
+    },
+    updateListdata (state, payload) {
+      console.log(payload)
+    },
+    addListdata (state, payload){
+      state.checkboxes.push(payload)
+    },
+    removeListdata (state, payload){
+      let arr = [...state.checkboxes],
+        index = arr.indexOf(payload)
+      if(index > -1){
+        arr.splice(index, 1)
+        state.checkboxes = arr
+      }
+    }
+  },
+  getters: {},
+  actions: {
+    getFilesListData (context) {
+      //获取文件数据列表
+      DataManager.getDataList().then(response => {
+        let re = []
+        response.data.forEach( (d, i) => {
+            let checkModel = d + '_' + i
+            let obj = {'title': d.name}
+              obj[checkModel] = false
+            re.push(obj)
+        })
+        context.commit('getFilesListData', {data: re})
+      })
+    },
+    getFileAttrList (context, payload) {
+      //获取数据文件属性
+      DataManager.getFileAttrList(payload.dataName).then(response => {
+        console.log(response.data)
+      })
+    }
+  },
+})
+
 /* eslint-disable no-new */
 new Vue({
-  el: '#app', 
+  el: '#app',
   router,
+  store,
   components: { App },
-  template: '<App/>'
+  template: '<App/>',
+  mounted() {
+    this.$store.dispatch('getFilesListData') // init listdata
+  }
 }).$mount('#app')
-
-

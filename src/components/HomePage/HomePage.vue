@@ -1,20 +1,21 @@
 <template>
     <div>
-        <body-left/>
-        <body-middle/>
-        <body-bottom/>
+        <vs-col vs-w="1.5" vs-h="12">
+            <data-list-bar/>
+        </vs-col>
+        <vs-col vs-w="10.5" vs-h="12">
+            <data-previewer/>
+        </vs-col>
     </div> 
 </template>
 <script>
-import BodyLeft from '../../common/BodyLeft/BodyLeft'
-import BodyMiddle from '../../common/BodyMiddle/BodyMiddle'
-import BodyBottom from '../../common/BodyBottom/BodyBottom'
+import DataListBar from '../../common/DataListBar/DataListBar'
+import DataPreviewer from '../../common/DataPreviewer/DataPreviewer'
 export default{
     name: 'homepage',
     components: {
-        BodyLeft,
-        BodyMiddle,
-        BodyBottom
+        DataListBar,
+        DataPreviewer
     }
 }
 </script>

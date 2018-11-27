@@ -8,7 +8,7 @@
       class="myNavbar">
 
       <vs-navbar-title>
-        Navbar Color
+        OpenVis
       </vs-navbar-title>
 
       <vs-navbar-item index="0" >
@@ -20,7 +20,6 @@
 
       <vs-spacer></vs-spacer>
 
-      <vs-button color-text="rgb(255, 255, 255)" color="rgba(255, 255, 255, 0.3)" vs-type="flat" vs-radius="50%" vs-icon="more_horiz"></vs-button>
     </vs-navbar>
   </div>
 </template>
@@ -28,7 +27,7 @@
 <script>
 export default {
   data: ()=>({
-    colorx:'#1db952',
+    colorx:'grey',
     indexActive: 0
   })
 }
