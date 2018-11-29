@@ -8,31 +8,31 @@
             </vs-row>
             <vs-row vs-h="8">
                 <div id="testdiv" style="position:absolute" :data="checkBoxesList"></div>
-                <div id="draggableMenu" style="font-size: 8px; position:absolute; width: 300px; height: 150px; background-color: rgba(200, 200, 200, 0.2)"  v-bind:class="{active: isActive}">
+                <div id="draggableMenu" style="font-size: 8px; position:absolute; left:768px; top:125px; width: 300px; height: 150px; background-color: rgba(200, 200, 200, 0.2); opacity:0;">
                     <div style="float: left; width:260px; height:30px; text-align:left; ">
                         <p style="padding: 12px">Connect</p>
                     </div>
                     <div style="float: left; width:40px; height:20px;">
-                        <vs-button color="rgb(128,128,128)" type="flat" icon="clear" style="padding: auto"></vs-button>
+                        <vs-button color="rgb(128,128,128)" type="flat" icon="clear" style="padding: auto" v-on:click="clickClosedraggableMenu()"></vs-button>
                     </div>
                     
-                    <div :key="index" v-for = "(todo, index) in todos">
+                    <div :key="index" v-for = "(todo, index) in svgtodos">
                         <div style="float: left; width:75px; height:60px; padding-top: 10px">
                             <img :src = "getImgUrl(todo.route)"  style="float: left; width:75px; height:30px;">
-                            <vs-button color="rgb(128,128,128)" type="flat" style="float: left; width:75px; height:30px; padding-top: 5px;">{{ todo.type }}</vs-button>
+                            <vs-button color="rgb(128,128,128)" type="flat" style="float: left; width:75px; height:30px; padding-top: 5px;" v-on:click="generateData(todo.type)">{{ todo.type }}</vs-button>
                         </div>
                     </div>
                     
                     <div style="float: left; width:300px; padding-top:10px">
                         <div style="float: left; width:150px;">
-                            <vs-select color="rgb(128,128,128)" :label="leftData" v-model="select1" style="float: left; width:150px;">
-                                <vs-select-item :key= "index" :value="item.value" :text="item.text" v-for= "(item,index) in options1" />
+                            <vs-select color="rgb(128,128,128)" :label="state.labels.left" v-model="state.attrLeftSelect" style="float: left; width:150px;">
+                                <vs-select-item :key= "index" :value="item.value" :text="item.text" v-for= "(item,index) in state.attrList.left" />
                             </vs-select>
                         </div>
                         
                         <div style="float: left; width:150px;">
-                            <vs-select color="rgb(128,128,128)" :label="rightData" v-model="select2" style="float: left; width:150px;">
-                                <vs-select-item :key = "index" :value="item.value" :text="item.text" v-for= "(item,index) in options2" />
+                            <vs-select color="rgb(128,128,128)" :label="state.labels.right" v-model="state.attrRightSelect" style="float: left; width:150px;">
+                                <vs-select-item :key = "index" :value="item.value" :text="item.text" v-for= "(item,index) in state.attrList.right" />
                             </vs-select>
                         </div>
                     </div>
@@ -40,13 +40,8 @@
                 </div>
             </vs-row>
         </vs-row>
-        <vs-row vs-h="8">
-            <vs-row vs-h="2">
-                <!--数据列表功能区-->
-            </vs-row>
-            <vs-row vs-h="10">
-                <!--数据列表查看区-->
-            </vs-row>
+        <vs-row vs-h="8" style="margin-top: 30%">
+            <Data-list-viewer :tableMsg="state.tablemsg"/>
         </vs-row>
     </div>
 </template>
@@ -54,20 +49,46 @@
 import * as d3 from 'd3'
 import * as path from 'path'
 import Vue from 'vue'
+import DataManager from '../DataManager'
+import DataListViewer from './DataListViewer'
 let che = []
 export default{
     name: 'DataPreviewer',
     data: function(){
         return {
             state:{
-                storeBox:[]
+                storeBox:[],
+                tabsPosition:[
+                    {
+                        'isoccupy': false,
+                        'left': 200,
+                        'id': null,
+                        'position': 'left'
+                    },
+                    {
+                        'isoccupy': false,
+                        'left': 350,
+                        'id': null,
+                        'position': 'right'
+                    }
+                ],
+                labels:{
+                    'left': null,
+                    'right': null
+                },
+                attrList:{
+                    'left':[],
+                    'right':[]
+                },
+                attrLeftSelect:0,
+                attrRightSelect:0,
+                tablemsg:{
+                    'value': null
+                }
             },
-            layerWidth:'',
-            layerHieght:'',
             id:'DataOperater',
             dataTabs: {'count': 0, datalist: []},
-            url: 'http://localhost:3000/api/svg',
-            todos: [
+            svgtodos: [
                 {
                     id: 1,
                     route: "left-join.svg",
@@ -88,41 +109,7 @@ export default{
                     route: "full-join.svg",
                     type: "full-join"
                 }
-            ],
-            dataSource:{
-                source: 'source',
-                target: 'target'
-            },
-            isActive: true,
-            select1:2,
-            select2:7,
-            options: [
-                { text: 'One', value: 'A' },
-                { text: 'Two', value: 'B' },
-                { text: 'Three', value: 'C' }
-            ],
-            options1:[
-                {text:'IT',value:0},
-                {text:'Blade Runner',value:2},
-                {text:'Thor Ragnarok',value:3}
-            ],
-            options2:[
-                {text: 'Square', value: 1},
-                {text: 'Rectangle', value: 2},
-                {text: 'Rombo', value: 3},
-                {text: 'Romboid', value: 4},
-                {text: 'Trapeze', value: 5},
-                {text: 'Triangle', value: 6},
-                {text: 'Polygon', value: 7},
-                {text: 'Regular polygon', value: 8},
-                {text: 'Circumference', value: 9},
-
-                {text: 'Circle', value: 10},
-                {text: 'Circular sector', value: 11},
-                {text: 'Circular trapeze', value: 12}
-            ],
-            leftData:'data1',
-            rightData:'data2'
+            ], //drag box svg icon
         }
     },
     computed:{
@@ -133,9 +120,13 @@ export default{
     watch:{
         checkBoxesList (val, oldVal) {
             this.updateCheckBoxes(val)
+            this.isShowdraggableMenuInit(val)
+        },
+        select1(val){
         }
     },
     components: {
+        DataListViewer
     },
     methods: {
         getImgUrl(pet) {
@@ -162,11 +153,9 @@ export default{
 
             let button = d3.select('#testbutton')
                 .on('click', function(){
-                    console.log('buttonClick')
                 })
 
             function dragstarted(d){
-                console.log('dragstarted')
             }
             function dragged(d){
                 d3.select(this)
@@ -180,21 +169,34 @@ export default{
                     });
             }
             function dragended(d){
-                console.log('dragended')
             }
         },
         addDataTabs(dataName){
+            let that = this
             if(this.dataTabs.count >= 2) return;
-            
+
             let top = 50,
-                left = this.dataTabs.count * 150 + 100,
+                left = null,
                 width = 100,
                 height = 25,
                 divId = 'div_' + dataName,
-                randomColor = d3.scaleOrdinal(d3.schemeCategory10)
+                randomColor = d3.scaleOrdinal(d3.schemeCategory10),
+                position = null
+            
+            //通过tab位置字典获取tab left位置 并设置id
+            for(let i=0; i<this.state.tabsPosition.length; i++){
+                let d = this.state.tabsPosition[i]
+                if(d.isoccupy == false){
+                    left = d.left
+                    d.isoccupy = true
+                    d.id = divId
+                    position = d.position
+                    break;
+                }
+            }
 
             let div = d3.select('#testdiv')
-                div.append('div')
+            let addtab = div.append('div')
                     .attr('id', divId)
                     .style('top', top + 'px')
                     .style('left', left + 'px')
@@ -208,18 +210,44 @@ export default{
                     .text(dataName)
                     .style('padding-top', '4px')
                     .style('font-size', '.8rem')
-                
+
+                addtab.style('opacity', 0)
+                addtab.transition().duration(300).style('opacity', 1)
+
             if(this.dataTabs.datalist.indexOf(dataName) == -1){
                 this.dataTabs.count ++ 
                 this.dataTabs.datalist.push(dataName)
             }
+
+            
+            DataManager.getFileAttrList(dataName).then(function(response) {
+                let re = []
+                response.data.forEach((d, i) => {
+                    re.push({'text': d.name, 'value': d.name})
+                })
+
+                //new draggable data attr list
+                that.$set(that.state['attrList'], position, re)
+                //new draggable data title
+                that.$set(that.state['labels'], position, dataName)
+            })
         },
         delDataTabs(dataName){
             if(this.dataTabs.count <= 0) return;
             let dataIndex = this.dataTabs.datalist.indexOf(dataName),
                 divId = 'div_' + dataName
             
-            d3.select('#' + divId).remove()
+            //删除位置字典内tab id
+            this.state.tabsPosition.forEach(d => {
+                if(d.id == divId){
+                    d.isoccupy = false
+                    d.id = null
+                }
+            })
+
+            let tab = d3.select('#' + divId)
+                tab.transition().duration(300).style('opacity', 1)
+                tab.remove()
 
             if(dataIndex > -1){
                 this.dataTabs.count --
@@ -227,33 +255,60 @@ export default{
             }
             
         },
-        loadSvg(){
-            let svg = d3.select('#testbutton')
-                svg.selectAll('.pict')
-                .data(["http://localhost:3000/api/svg"])
-                .enter()
-                .append('image')
-                .attr("xlink:href", function(d){return d;})
-                .attr("width", 20)
-                .attr("height", 20)
-                .attr('x', 0)
-                .attr('y', 0)
-                
-        },
-        updateCheckBoxes : function(val) {
+        updateCheckBoxes: function(val) {
             //find diff(add, del) val
             let _val = [...val],
                 _oldVal = [...this.state.storeBox]
-            if(_val.length > _oldVal.length){
+            if(val.length > _oldVal.length){
                 //add Data
                 let toAddTab = _val.pop()
                 this.addDataTabs(toAddTab)
-            } else {
+            } else if (_val.length < _oldVal.length){
                 //delete Data
                 let toDelTab = _oldVal.filter(x => !_val.includes(x))[0]
                 this.delDataTabs(toDelTab)
             }
             this.$set(this.state, 'storeBox', [...val])
+        },
+        isShowdraggableMenuInit(val){
+            let len = val.length
+            if(len < 2){
+                d3.select('#draggableMenu').transition().duration(500).style('opacity', 0)
+            } else if(len == 2){
+                d3.select('#draggableMenu').transition().duration(500).style('opacity', 1)
+            }
+        },
+        clickClosedraggableMenu(){
+            d3.select('#draggableMenu').transition().duration(500).style('opacity', 0)
+        },
+        generateData(joinType){
+            //init variation
+            let leftName = this.state.labels.left,
+                rightName = this.state.labels.right,
+                leftAttr = this.state.attrLeftSelect,
+                rightAttr = this.state.attrRightSelect
+            
+            //post joinType {dataName_1: leftName, dataName_2: rightName, column: leftAttr}
+            let val = [
+                        {
+                            "test1.id": "2",
+                            "test1.name": "John",
+                            "test2.id": "2",
+                            "test2.name": "John",
+                            "test2.position": "2"
+                        },
+                        {
+                            "test1.id": "3",
+                            "test1.name": "Matt",
+                            "test2.id": "3",
+                            "test2.name": "Matt",
+                            "test2.position": "2"
+                        }
+                    ]
+
+            this.state.tablemsg = {'value': val}
+            //dispatch wait animation
+            //
         }
     },
     mounted() {

@@ -60,7 +60,7 @@ export default{
             
         },
         initData(){
-            DataManager.getDataList().then(response => {
+            DataManager.getDataInfo().then(response => {
                 let re = []
                 response.data.forEach( (d, i) => {
                     let obj = {'title': d.name}
@@ -73,7 +73,6 @@ export default{
             })
         },
         datalistProcess(val, oldVal){
-            
             if(val.length > 2){
                 //max checkboxes are 2
                 this.checkedNames.pop()

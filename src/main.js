@@ -68,7 +68,7 @@ const store = new Vuex.Store({
   actions: {
     getFilesListData (context) {
       //获取文件数据列表
-      DataManager.getDataList().then(response => {
+      DataManager.getDataInfo().then(response => {
         let re = []
         response.data.forEach( (d, i) => {
             let checkModel = d + '_' + i
